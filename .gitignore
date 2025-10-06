@@ -1,0 +1,11 @@
+/FarizaWeb/bin
+/FarizaWeb/logs
+/FarizaWeb/obj
+/COMMON/bin
+/COMMON/obj
+/DBHelper/bin
+/DBHelper/obj
+/MODEL/bin
+/MODEL/obj
+.vs/
+.DS_Store
