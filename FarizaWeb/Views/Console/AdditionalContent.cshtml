@@ -1,0 +1,152 @@
+@{
+    var additionalContent = QarModel<Additionalcontent>("additionalcontent");
+}
+<section class="pc-container">
+    <div class="pc-content">
+        <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="javascript:">@T("ls_Websitemanagement")</a>
+                            </li>
+                            <li class="breadcrumb-item" aria-current="page">@Title</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-10 col-md-9 ">
+                <form action="/@CurrentLanguage/QarBase/AdditionalContent" method="post" class="card qar-form"
+                    enctype="multipart/form-data" id="additional-content">
+                    <div class="card-header">
+                        <h5>@Title</h5>
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden" name="id" value="@additionalContent?.Id" />
+                        <ul class="nav nav-tabs mb-3" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="nav-language-default-tab" data-bs-toggle="tab"
+                                    href="#nav-language-default" role="tab" aria-selected="true">@T("ls_Default")</a>
+                            </li>
+                            @if (LanguageList.Count(x => x.IsDefault == 0 && x.FrontendDisplay == 1) > 1)
+                            {
+                                foreach (var item in LanguageList.Where(x => x.IsDefault == 0 && x.FrontendDisplay ==
+                                1).ToList())
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="nav-language-@item.Culture-tab"
+                                            href="#nav-language-@item.Culture" data-bs-toggle="tab" role="tab"
+                                            aria-selected="false">@item.FullName</a>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane show active" id="nav-language-default" role="tabpanel"
+                                aria-labelledby="nav-language-default-tab">
+
+                                <div class="form-group">
+                                    <label class="form-label" for="title">
+                                        @T("ls_Title")<span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" @(CanEdit ? "" : "readonly") id="title"
+                                        name="title" value="@additionalContent?.Title">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="shortDescription">
+                                        @T("ls_Shortdescription")
+                                    </label>
+                                    <textarea class="form-control" name="shortDescription" @(CanEdit ? "" : "readonly")
+                                        id="shortDescription" rows="3">@additionalContent?.ShortDescription</textarea>
+                                </div>
+                                <div class="form-group mb-0">
+                                    <label class="form-label" for="fullDescription">@T("ls_Fulldescription")</label>
+                                    <textarea class="form-control tinymce-editor" name="fullDescription"
+                                        id="fullDescription" rows="10">@additionalContent?.FullDescription</textarea>
+                                </div>
+                            </div>
+                            @foreach (var item in LanguageList.Where(x => x.FrontendDisplay == 1).ToList())
+                            {
+                                <div class="tab-pane" id="nav-language-@item.Culture" role="tabpanel"
+                                    aria-labelledby="nav-language-@item.Culture-tab">
+                                    @{
+                                        var title = MultiLanguageList.FirstOrDefault(x => x.ColumnName.Equals("title",
+                                        StringComparison.OrdinalIgnoreCase) && x.Language.Equals(item.Culture,
+                                        StringComparison.OrdinalIgnoreCase))?.ColumnValue;
+                                    }
+                                    <div class="form-group">
+                                        <label class="form-label" for="title_@item.Culture">@T("ls_Title")</label>
+                                        <input type="text" name="title_@item.Culture" @(CanEdit ? "" : "readonly")
+                                            data-multilanguage="input" class="form-control" id="title_@item.Culture"
+                                            value="@title">
+                                    </div>
+                                    @{
+                                        var shortDescription = MultiLanguageList.FirstOrDefault(x =>
+                                        x.ColumnName.Equals("shortDescription", StringComparison.OrdinalIgnoreCase) &&
+                                        x.Language.Equals(item.Culture, StringComparison.OrdinalIgnoreCase))?.ColumnValue;
+                                    }
+                                    <div class="form-group">
+                                        <label class="form-label"
+                                            for="shortDescription_@item.Culture">@T("ls_Shortdescription")</label>
+                                        <textarea class="form-control" data-multilanguage="textarea" @(CanEdit ? "" :
+                                        "readonly") name="shortDescription_@item.Culture"
+                                            id="shortDescription_@item.Culture" rows="2">@shortDescription</textarea>
+                                    </div>
+                                    @{
+                                        var fullDescription = MultiLanguageList.FirstOrDefault(x =>
+                                        x.ColumnName.Equals("fullDescription", StringComparison.OrdinalIgnoreCase) &&
+                                        x.Language.Equals(item.Culture, StringComparison.OrdinalIgnoreCase))?.ColumnValue;
+                                    }
+                                    <div class="form-group">
+                                        <label class="form-label"
+                                            for="fullDescription_@item.Culture">@T("ls_Fulldescription")</label>
+                                        <textarea class="form-control tinymce-editor" data-multilanguage="tinymce" @(CanEdit
+                                        ? "" : "readonly") name="fullDescription_@item.Culture"
+                                            id="fullDescription_@item.Culture" rows="10">@fullDescription</textarea>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @if (CanEdit)
+                    {
+                        <div class="card-footer text-end">
+                            <button type="reset" class="btn btn-outline-secondary">
+                                <i class="fa-duotone fa-rotate-right me-1"></i> @T("ls_Reset")
+                            </button>
+                            <button type="submit" class="btn btn-primary me-2" data-loading-text="@T("ls_Loading")">
+                                <i class="fa-duotone fa-floppy-disk me-1"></i> @T("ls_Save")
+                            </button>
+                        </div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts
+{
+    <script>document.addEventListener("DOMContentLoaded", function () {
+            let imgBackgroundImage = document.querySelector('img#backgroundImage'),
+                inputBackgroundImage = document.querySelector('input[name="backgroundImage"]');
+            imgBackgroundImage.addEventListener("click", function () {
+                inputBackgroundImage.click();
+            });
+            inputBackgroundImage.addEventListener("change", function (event) {
+                if (event.target.files && event.target.files[0]) {
+                    const fileReader = new FileReader();
+                    fileReader.readAsDataURL(event.target.files[0]);
+                    fileReader.addEventListener("load", function () {
+                        imgBackgroundImage.setAttribute('src', this.result);
+                    });
+                } else {
+                    imgBackgroundImage.setAttribute('src', '/images/no_image.png');
+                }
+            });
+        });
+        </script>
+}

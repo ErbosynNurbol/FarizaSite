@@ -1,0 +1,13 @@
+@{
+    Layout = "~/Views/Shared/_ConsoleLayout.cshtml";
+    var partialName = $"~/Views/Console/{ControllerName}/{ActionName}";
+}
+
+@if (Query.Similar("list"))
+{
+    <partial name="@partialName/List.cshtml"/>
+}
+else
+{
+    <partial name="@partialName/CreateOrEdit.cshtml"/>
+}
