@@ -32,7 +32,6 @@ namespace FarizaWeb.Filters
 
                 var language = context.HttpContext.Request.RouteValues["culture"].ToString();
                 var method = context.HttpContext.Request.Method.ToUpper();
-
                 var loginTime = context.HttpContext.User.Identity.LoginTime();
                 if (QarSingleton.GetInstance()
                         .IsReLoginAdmin(context.HttpContext.User.Identity.AdminId(), out var updateTime) &&

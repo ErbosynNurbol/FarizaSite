@@ -1,0 +1,124 @@
+@{
+    var regionList = QarList<Region>("regionList");
+}
+<script>
+     $(function () {
+        const strTableId = "#qar-table";
+        $(strTableId).dataTable({
+            "dom": `<'row'<'col-6'l><'col-6'f>><'row dt-row'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>`,
+            "autoWidth": true,
+            "destroy": true,
+            "processing": true,
+            "serverSide": true,
+            "ajax": function (data, callback, setting) {
+                $.ajax({
+                    url: "/@CurrentLanguage/@ControllerName/Get@(ActionName)List",
+                    type: "POST",
+                    data: {
+                        "keyword": data.search.value,
+                        "start": data.start,
+                        "length": data.length,
+                        "orderList": data.order
+                    },
+                    success: function (data) {
+                        const qData = data["data"],
+                            result = {},
+                            total = parseInt(qData["total"]);
+
+                        result.data = total > 0 ? qData["dataList"] : [];
+                        result.recordsFiltered = total;
+                        result.recordsTotal = total;
+                        callback(result);
+                    }
+                });
+            },
+            'order': [3, 'asc'],
+            "columns": [
+                {
+                    "data": null,
+                    "orderable": false,
+                    "width": "20px",
+                    "bSortable": false,
+                    "render": function (data, type, row) {
+                        if (parseInt(row.isSuper) === 1)
+                            return '<i class="fal fa-shield-check"></i>';
+                        return'<div class="form-check abc-checkbox">\
+                                            <input id="checkbox' + row.id + '" data-id="' + row.id + '" class="form-check-input datatable-checkbox" type="checkbox">\
+                                            <label class="form-check-label" for="checkbox' + row.id + '">\
+                                            </label>\
+                                        </div>';
+                    }
+                },
+                {
+                    "data": 'regionNumber',
+                    "orderable": false
+                },
+                {
+                    "data": 'cityName',
+                    "orderable": false
+                },
+                {
+                    "data": null,
+                    "orderable": false,
+                    "render": function (data, type, row) {
+                        return `<a href="${row.map2gis}" target="_blank">${row.longitude} * ${row.latitude}</a>`;
+                    }
+                },
+                {
+                    "data": null,
+                    "orderable": true,
+                    "render": function (data, type, row) {
+                        return `${row.addDate} <span class="text-muted text-sm d-block">${row.addTime}</span>`;
+                    }
+                },
+                {
+                    "data": null,
+                    "orderable": false,
+                    "width": "100px",
+                    "bSortable": false,
+                    "render": function (data, type, row) {
+                       return `<a class="avtar avtar-xs btn-light-info" href="/@CurrentLanguage/@(ControllerName.ToLower())/@(ActionName.ToLower())/edit?id=${row.id}"><i class="fa-duotone fa-pen-to-square"></i></a>`;
+                    }
+                }
+            ],
+            "oLanguage": $qar.getDataTableLanguage(),
+            "preDrawCallback": function () {
+
+            },
+            "rowCallback": function (nRow) {
+
+            },
+            "drawCallback": function (oSettings) {
+
+            }
+        });
+    });
+</script>
+
+<script src="https://api-maps.yandex.ru/2.1/?lang=kk_KZ" type="text/javascript"></script>
+<script type="text/javascript">ymaps.ready(init);
+
+    function init() {
+        var map = new ymaps.Map("yandex-map", {
+            center: [43.238949, 76.889709], // Almaty
+            zoom: 11,
+        });
+
+        var coordinates = [
+            @foreach(var region in regionList)
+{
+            <text>
+            [@region.Latitude, @region.Longitude,"@region.RegionNumber"],
+            </text>
+}
+        ];
+
+        coordinates.forEach(function (coord) {
+            var placemark = new ymaps.Placemark([coord[0], coord[1]], {
+                iconContent: coord[2]
+            }, {
+                preset: 'islands#blueStretchyIcon'
+            });
+            map.geoObjects.add(placemark);
+        });
+    }</script>

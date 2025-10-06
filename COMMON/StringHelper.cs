@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -178,4 +179,82 @@ public static class StringHelper
         }
         return input;
     }
+   
+    #region Басталу уақыты мен аяқталу уақытн алу +GetStartTimeAndEndTime(string strTime, out int queryStartTime, out int queryEndTime)
+    public static bool GetStartTimeAndEndTime(string strTime, out int queryStartTime, out int queryEndTime)
+    {
+        var qArr = new[] { "today", "thisweek", "thismonth", "thisyear", "yesterday", "lastweek", "lastmonth" };
+        var now = DateTime.Now;
+        queryStartTime = 0;
+        queryEndTime = 0;
+        if (!qArr.Contains(strTime))
+        {
+            var dArr = strTime.Split('~');
+            if (dArr.Length != 2) return false;
+            if (!DateTime.TryParseExact(dArr[0], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var startTime))
+                return false;
+            if (!DateTime.TryParseExact(dArr[1], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var endTime))
+                return false;
+            endTime = DateTime.Parse(endTime.ToString("yyyy/MM/dd 23:59:59"));
+            queryStartTime = UnixTimeHelper.ConvertToUnixTime(startTime);
+            queryEndTime = UnixTimeHelper.ConvertToUnixTime(endTime);
+        }
+        else
+        {
+            queryEndTime = UnixTimeHelper.ConvertToUnixTime(now);
+            switch (strTime.Trim().ToLower())
+            {
+                case "today":
+                    {
+                        var today = now.Date;
+                        queryStartTime = UnixTimeHelper.ConvertToUnixTime(today);
+                    }
+                    break;
+                case "thisweek":
+                    {
+                        var dayOfWeek = Convert.ToInt32(now.DayOfWeek.ToString("d").Equals("0") ? "7" : now.DayOfWeek.ToString("d"));
+                        var thisWeek = now.AddDays(1 - dayOfWeek).Date;
+                        queryStartTime = UnixTimeHelper.ConvertToUnixTime(thisWeek);
+                    }
+                    break;
+                case "thismonth":
+                    {
+                        var thisMonth = now.AddDays(1 - now.Day).Date;
+                        queryStartTime = UnixTimeHelper.ConvertToUnixTime(thisMonth);
+                    }
+                    break;
+                case "thisyear":
+                    {
+                        var thisYear = DateTime.Parse(DateTime.Now.ToString("yyyy/01/01"));
+                        queryStartTime = UnixTimeHelper.ConvertToUnixTime(thisYear);
+                    }
+                    break;
+                case "yesterday":
+                    {
+                        var yesterday = now.AddDays(-1).Date;
+                        queryStartTime = UnixTimeHelper.ConvertToUnixTime(yesterday);
+                        queryEndTime = UnixTimeHelper.ConvertToUnixTime(DateTime.Parse(now.ToString("yyyy/MM/dd 23:59:59")).AddDays(-1));
+                    }
+                    break;
+                case "lastweek":
+                    {
+                        var dayOfWeek = Convert.ToInt32(now.DayOfWeek.ToString("d").Equals("0") ? "7" : now.DayOfWeek.ToString("d"));
+                        var lastWeek = DateTime.Now.AddDays(Convert.ToDouble((0 - dayOfWeek)) - 6).Date;
+                        queryStartTime = UnixTimeHelper.ConvertToUnixTime(lastWeek);
+                        queryEndTime = UnixTimeHelper.ConvertToUnixTime(DateTime.Parse(lastWeek.AddDays(6).ToString("yyyy/MM/dd 23:59:59")));
+                    }
+                    break;
+                case "lastmonth":
+                    {
+                        var thisMonth = now.AddDays(1 - now.Day).Date;
+                        var lastMonth = DateTime.Parse(now.ToString("yyyy/MM/01")).AddMonths(-1);
+                        queryStartTime = UnixTimeHelper.ConvertToUnixTime(lastMonth);
+                        queryEndTime = UnixTimeHelper.ConvertToUnixTime(DateTime.Parse(thisMonth.ToString("yyyy/MM/dd 23:59:59")).AddDays(-1));
+                    }
+                    break;
+            }
+        }
+        return true;
+    }
+    #endregion
 }

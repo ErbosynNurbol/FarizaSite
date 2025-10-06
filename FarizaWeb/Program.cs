@@ -119,11 +119,11 @@ app.MapControllerRoute(
     constraints: new { culture = "kz|tote|latyn|ru|en" } //|ru|en|zh-cn|tr
 );
 
-// app.MapControllerRoute(
-//     name: "language_default",
-//     pattern: "{culture=kz}/{Admin}/{action=Login}/{query?}",
-//     constraints: new { culture = "kz|tote|latyn|ru|en" } //|ru|en|zh-cn|tr
-// );
+app.MapControllerRoute(
+    name: "language_default",
+    pattern: "{culture=kz}/{Admin}/{action=Login}/{query?}",
+    constraints: new { culture = "kz|tote|latyn|ru|en" } //|ru|en|zh-cn|tr
+);
 
 app.MapControllerRoute(
     name: "admin_default",

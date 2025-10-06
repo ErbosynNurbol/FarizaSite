@@ -481,4 +481,28 @@ public class QarCache
 
     #endregion
 
+    #region City тізімін алу +GetCityList(IMemoryCache _memoryCache)
+    public static List<City> GetCityList(IMemoryCache memoryCache)
+    {
+        var cacheName = $"{MethodBase.GetCurrentMethod()?.Name}";
+        if (memoryCache.TryGetValue<List<City>>(cacheName, out var list)) return list;
+        using var connection = Utilities.GetOpenConnection();
+        list = connection.GetList<City>("where qStatus = 0").ToList();
+        memoryCache.Set(cacheName, list, TimeSpan.FromDays(1));
+        return list;
+    }
+    #endregion
+    
+    #region Region тізімін алу +GetRegionList(IMemoryCache _memoryCache)
+    public static List<Region> GetRegionList(IMemoryCache memoryCache)
+    {
+        var cacheName = $"{MethodBase.GetCurrentMethod()?.Name}";
+        if (memoryCache.TryGetValue<List<Region>>(cacheName, out var list)) return list;
+        using var connection = Utilities.GetOpenConnection();
+        list = connection.GetList<Region>("where qStatus = 0").ToList();
+        memoryCache.Set(cacheName, list, TimeSpan.FromDays(1));
+        return list;
+    }
+    #endregion
+
 }

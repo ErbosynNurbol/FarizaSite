@@ -1,0 +1,78 @@
+@{
+    var region = QarModel<Region>("region");
+    var cityList = QarList<City>("cityList");
+}
+<section class="pc-container">
+    <div class="pc-content">
+        <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="javascript:void(0)">@T("ls_Packages")</a>
+                            </li>
+                            <li class="breadcrumb-item" aria-current="page">@ViewData["title"]</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <form class="card qar-form" action="/@CurrentLanguage/@ControllerName/@(ActionName)" method="post"
+                    enctype="multipart/form-data">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h5>@ViewData["title"]</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden" name="id" value="@region?.Id" />
+                        <div class="form-group">
+                            <label class="form-label" for="roleIdList">
+                                @T("ls_City")<span class="text-danger">*</span>
+                            </label>
+                            <select class="form-control" data-trigger name="cityId" id="roleIdList">
+                                @foreach (var city in cityList)
+                                {
+                                    if (region?.CityId == city.Id)
+                                    {
+                                        <option value="@city.Id" selected>@city.CityName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@city.Id">@city.CityName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="regionNumber">
+                                @T("ls_Name") <span class="text-danger">*</span>
+                            </label>
+                            <input type="hidden" name="id" value="@region?.Id" />
+                            <input type="text" class="form-control" id="regionNumber" name="regionNumber" value="@region?.RegionNumber">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="map2gis">2GIS<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" value="@region?.Map2gis" name="map2gis" id="map2gis" />
+                        </div>
+                    </div>
+                        <div class="card-footer text-end">
+                            <button type="reset" class="btn btn-outline-secondary">
+                                <i class="fa-duotone fa-rotate-right me-1"></i>@T("ls_Reset")
+                            </button>
+                            <button type="submit" class="btn btn-primary me-2" data-loading-text="@T("ls_Loading") ...">
+                                <i class="fa-duotone fa-floppy-disk me-1"></i> @T("ls_Save")
+                            </button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</section>

@@ -41,8 +41,6 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Hangfire\" />
-        <Folder Include="Views\Console\Catalog\" />
-        <Folder Include="Views\Themes\Bairaq\Modal\" />
         <Folder Include="wwwroot\console\images\" />
         <Folder Include="wwwroot\console\js\plugins\tinymce\" />
         <Folder Include="wwwroot\console\js\plugins\uppy\" />
@@ -51,13 +49,12 @@
         <Folder Include="Views\Console\Modal\" />
         <Folder Include="Views\Console\QarBase\" />
         <Folder Include="Views\Shared\" />
-        <Folder Include="Views\Themes\" />
         <Folder Include="wwwroot\sitemap\xml\" />
-        <Folder Include="wwwroot\themes\" />
         <Folder Include="Views\Console\Admin\Person\" />
         <Folder Include="Views\Console\Admin\Role\" />
         <Folder Include="Views\Console\Partial\" />
         <Folder Include="Attributes\" />
+        <Folder Include="wwwroot\uploads\pdf\" />
     </ItemGroup>
     <ItemGroup>
         <Content Remove="wwwroot\admin\js\plugins\tinymce\" />

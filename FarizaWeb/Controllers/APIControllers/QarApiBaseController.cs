@@ -14,13 +14,16 @@ namespace FarizaWeb.Controllers;
 [ApiController]
 public class QarApiBaseController : ControllerBase
 {
-    protected readonly IMemoryCache _memoryCache;
+    private readonly IWebHostEnvironment _environment;
+    private readonly IMemoryCache _memoryCache;
     protected readonly string[] ImageFileExtensions = { ".jpg", ".png", ".gif", ".jpeg" };
     protected const string CurrencyType = "USD2KGS";
+ 
     public string NoImage => $"/{CurrentLanguage}/QarBase/GenerateRatioImage?w=160&h=90";
-    public QarApiBaseController(IMemoryCache memoryCache)
+    public QarApiBaseController(IMemoryCache memoryCache,IWebHostEnvironment environment)
     {
         _memoryCache = memoryCache;
+        _environment = environment;
     }
 
     protected bool IsApi => HttpContext.Request.Headers.ContainsKey("X-Client-Platform");
@@ -226,6 +229,23 @@ public class QarApiBaseController : ControllerBase
         }
 
         return _connection.GetList<Multilanguage>(querySql, queryObj).ToList();
+    }
+
+    #endregion
+    
+    #region Save To File + SaveToFile(IFormFile media)
+
+    public string SaveToFile(IFormFile media)
+    {
+        var tempKey = Guid.NewGuid().ToString();
+        var fileFormat = Path.GetExtension(media.FileName).ToLower();
+        var mediaUrl = "/uploads/pdf/" + tempKey + fileFormat;
+        var absolutePath = _environment.WebRootPath + mediaUrl;
+        if (!Directory.Exists(Path.GetDirectoryName(absolutePath)))
+            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath) ?? string.Empty);
+        using var stream = System.IO.File.OpenWrite(absolutePath);
+        media.CopyTo(stream);
+        return mediaUrl;
     }
 
     #endregion
