@@ -250,4 +250,8 @@
       <EmbeddedResource Remove="Views\Console\Catalog\Category\**" />
       <EmbeddedResource Remove="Views\Console\Catalog\Article\**" />
     </ItemGroup>
+    <ItemGroup>
+      <AdditionalFiles Include="Views\Console\Catalog\Kaspibill\List.cshtml" />
+      <AdditionalFiles Include="Views\Console\Catalog\Kaspibill\ListScripts.cshtml" />
+    </ItemGroup>
 </Project>

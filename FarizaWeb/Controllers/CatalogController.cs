@@ -375,6 +375,7 @@ public class CatalogController : QarBaseController
 
     #endregion
     
+    #region Жарнама +Advertise(APIUnifiedModel model)
     public IActionResult Advertise(string query)
     {
         query = (query ?? string.Empty).Trim().ToLower();
@@ -391,7 +392,6 @@ public class CatalogController : QarBaseController
         return Redirect($"/{CurrentLanguage}/{ControllerName.ToLower()}/{ActionName.ToLower()}/list");
     }
     
-    #region Жарнама +Advertise(APIUnifiedModel model)
     [HttpPost]
     public IActionResult Advertise()
     {
@@ -419,5 +419,26 @@ public class CatalogController : QarBaseController
             return MessageHelper.RedirectAjax(T("ls_Complete"), Status.Success, "", null);
         }
     }
+    #endregion
+
+    #region Kaspibill
+
+    public IActionResult Kaspibill(string query)
+    {
+        query = (query ?? string.Empty).Trim().ToLower();
+        ViewData["query"] = query;
+        ViewData["title"] = T("ls_Bill");
+        using var connection = Utilities.GetOpenConnection();
+        switch (query)
+        {
+            case "list":
+            {
+                return View($"~/Views/Console/{ControllerName}/{ActionName}/List.cshtml");
+            }
+        }
+        return Redirect($"/{CurrentLanguage}/{ControllerName.ToLower()}/{ActionName.ToLower()}/list");
+    }
+    
+
     #endregion
 }

@@ -1,0 +1,54 @@
+
+<section class="pc-container">
+    <div class="pc-content">
+        <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="javascript:void(0);">@T("ls_Catalog")</a>
+                            </li>
+                            <li class="breadcrumb-item" aria-current="page">@ViewData["title"]</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12 col-sm-4 mb-3 mb-sm-0">
+                                <h5>@ViewData["title"]</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="dt-responsive">
+                            
+                            <div class="mb-1">
+                                <button class="btn btn-primary" type="button" id="btn-get-advertise" data-loading-text="@T("ls_Loading") ..."><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts{
+   <script>
+       $(function () {
+           $('#btn-get-advertise').on('click', function () {
+               $.post('/@CurrentLanguage/catalog/advertise', function (data) {
+                   if (data['status'] === 'success') {
+                       window.open(data['backUrl'], "_blank") || window.location.replace(data['backUrl']);
+                   }
+               });
+           });
+       })
+   </script>
+}
