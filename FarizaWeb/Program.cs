@@ -65,6 +65,20 @@ builder.Services.AddControllersWithViews((configure =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", policy => policy
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+
+    options.AddPolicy("StaticFile", policy => policy
+        .WithOrigins("http://localhost:5106", "https://almasbek-batyr.3100.kz")
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
+
+
 builder.Services.Configure<FormOptions>(o =>
 {
     o.MultipartBodyLengthLimit = maxFileSize;
@@ -85,6 +99,7 @@ builder.WebHost.ConfigureKestrel(opts =>
     opts.Limits.MinRequestBodyDataRate = null;   
     opts.Limits.KeepAliveTimeout      = TimeSpan.FromMinutes(30);
     opts.Limits.RequestHeadersTimeout  = TimeSpan.FromMinutes(30);
+    
 });
 
 builder.Services.AddHangfire(x => x.UseMemoryStorage());
