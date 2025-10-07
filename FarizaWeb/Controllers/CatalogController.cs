@@ -407,7 +407,6 @@ public class CatalogController : QarBaseController
                 msgText = msgText.Replace("{phone}", person.Phone);
                 string encodedMessage = System.Net.WebUtility.UrlEncode(msgText);
                 string whatsappUrl = $"https://wa.me/{person.Phone.Replace("+","")}?text={encodedMessage}";
-            
                 _connection.Execute(
                     "UPDATE consignee SET isSendSms = 1 WHERE id = @personId", 
                     new { personId = person.Id }

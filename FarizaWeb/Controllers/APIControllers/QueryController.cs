@@ -221,7 +221,17 @@ public class QueryController : QarApiBaseController
     [HttpPost]
     public IActionResult Client([FromForm] Client client,[FromForm] IFormFile receipt)
     {
-        
+        if (client.Latitude == 0 && Request.Form.ContainsKey("Latitude"))
+        {
+            if (double.TryParse(Request.Form["Latitude"], NumberStyles.Float, CultureInfo.InvariantCulture, out double lat))
+                client.Latitude = lat;
+        }
+    
+        if (client.Longitude == 0 && Request.Form.ContainsKey("Longitude")) 
+        {
+            if (double.TryParse(Request.Form["Longitude"], NumberStyles.Float, CultureInfo.InvariantCulture, out double lng))
+                client.Longitude = lng;
+        }
         if (string.IsNullOrEmpty(client.Name))
             return MessageHelper.RedirectAjax(T("ls_Tfir"), Status.Error, "", "Name");
         if (string.IsNullOrEmpty(client.Phone) || !RegexHelper.IsPhoneNumber(client.Phone, out string phoneNumber))
@@ -231,6 +241,12 @@ public class QueryController : QarApiBaseController
             return MessageHelper.RedirectAjax(T("ls_Tfir"), Status.Error, "", "Address");
         if (receipt == null)
             return MessageHelper.RedirectAjax(T("ls_Psaftu"), Status.Error, "", "receipt");
+        var regionId = 0;
+        if (client.Longitude > 0.0 && client.Latitude > 0.0)
+        {
+            var regionList = QarCache.GetRegionList(_memoryCache);
+            regionId = CoordinateExtractor.GetRegionForCoordinates(client.Longitude, client.Latitude,regionList);   
+        }
         
         var receiptFileUrl = SaveToFile(receipt);
         var receiptInfo = ReceiptParser.ExtractReceiptInfo(receiptFileUrl);
@@ -269,6 +285,7 @@ public class QueryController : QarApiBaseController
                 Name = client.Name,
                 ConsigneeId = consignee.Id,
                 BillNumber = billNumber,
+                RegionId = regionId,
                 BillAmount = billAmount,
                 Address = client.Address,
                 Phone = client.Phone,
