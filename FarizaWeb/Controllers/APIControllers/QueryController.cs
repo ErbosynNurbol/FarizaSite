@@ -254,12 +254,20 @@ public class QueryController : QarApiBaseController
         int billAmount = 0;
         if (receiptInfo != null)
         {
-            billNumber = receiptInfo.QRNumber ?? "";
-            billAmount = Convert.ToInt32(receiptInfo.Amount);
+            if (billNumber.Length > 0 && receiptInfo.Amount > 0)
+            {
+                billNumber = receiptInfo.QRNumber;
+                billAmount = Convert.ToInt32(receiptInfo.Amount);
+            }
+            else
+            {
+                return MessageHelper.RedirectAjax(T("ls_Trinvputord"), Status.Error, "", "BillNumber");
+            }
+            
         }
         else
         {
-            return MessageHelper.RedirectAjax("Чек жарамсыз", Status.Error, "", "BillNumber");
+            return MessageHelper.RedirectAjax(T("ls_Trinvputord"), Status.Error, "", "BillNumber");
         }
                 
         using var connection = Utilities.GetOpenConnection();
@@ -271,13 +279,13 @@ public class QueryController : QarApiBaseController
             var consignee = connection.GetList<Consignee>("WHERE qStatus = 0 AND phone = @phone", new { client.Phone }).FirstOrDefault();
             if (consignee == null)
             {
-                return MessageHelper.RedirectAjax("no peple", Status.Error, "", "Phone");
+                return MessageHelper.RedirectAjax(T("ls_Tuhnptd"), Status.Error, "", "Phone");
             }
 
             var existingBill = connection.GetList<Client>("WHERE qStatus = 0 AND billNumber = @billNumber", new { billNumber }).FirstOrDefault();
             if (existingBill != null)
             {
-                return MessageHelper.RedirectAjax("Чек жарамсыз", Status.Error, "", "BillNumber");
+                return MessageHelper.RedirectAjax(T("ls_Traednaia"), Status.Error, "", "BillNumber");
             }
             
             res = connection.Insert(new Client

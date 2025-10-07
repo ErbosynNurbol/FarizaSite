@@ -100,7 +100,7 @@ public class CatalogController : QarBaseController
         var clientList = connection
             .Query<Client>("select * " + querySql + " order by " + orderSql + $" limit {start} , {length}", queryObj)
             .ToList();
-        
+        var regionList = QarCache.GetRegionList(_memoryCache);
         var dataList = clientList.Select(client => new
         {
              client.Id,
@@ -110,7 +110,9 @@ public class CatalogController : QarBaseController
             client.Longitude,
             client.Latitude,
             client.ReceiptPath,
-            type = T($"{BillTypeHelper.GetStatusText(client.BillType)}"),   
+            avatarUrl = "/images/default_avatar.png",
+            type = T($"{BillTypeHelper.GetStatusText(client.BillType)}"),  
+            reginName = regionList.FirstOrDefault(r => r.Id == client.RegionId)?.RegionNumber ?? "",
             AddTime = UnixTimeHelper.UnixTimeToDateTime(client.AddTime).ToString("dd/MM/yyyy HH:mm")
         }).ToList();
         return MessageHelper.RedirectAjax(T("ls_Searchsuccessful"), Status.Success, "",
