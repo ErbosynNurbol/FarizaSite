@@ -373,4 +373,49 @@ public class CatalogController : QarBaseController
     }
 
     #endregion
+    
+    public IActionResult Advertise(string query)
+    {
+        query = (query ?? string.Empty).Trim().ToLower();
+        ViewData["query"] = query;
+        ViewData["title"] = T("ls_Regions");
+        using var connection = Utilities.GetOpenConnection();
+        switch (query)
+        {
+            case "list":
+            {
+                return View($"~/Views/Console/{ControllerName}/{ActionName}/List.cshtml");
+            }
+        }
+        return Redirect($"/{CurrentLanguage}/{ControllerName.ToLower()}/{ActionName.ToLower()}/list");
+    }
+    
+    #region Жарнама +Advertise(APIUnifiedModel model)
+    [HttpPost]
+    public IActionResult Advertise()
+    {
+        using (var _connection = Utilities.GetOpenConnection())
+        {
+            Consignee person = _connection.Query<Consignee>(
+                "SELECT id, phone FROM consignee WHERE qStatus = 0 AND isSendSms = 1 AND id >= (SELECT FLOOR(RAND() * (SELECT MAX(id) FROM consignee))) ORDER BY id LIMIT 1"
+            ).FirstOrDefault();
+        
+            if (person != null)
+            {
+                string msgText = "тапсыоыл уддваолалщда {url}";
+                msgText = msgText.Replace("{url}", "https://fariza.3100.kz");
+                string encodedMessage = System.Net.WebUtility.UrlEncode(msgText);
+                string whatsappUrl = $"https://wa.me/{person.Phone.Replace("+","")}?text={encodedMessage}";
+            
+                _connection.Execute(
+                    "UPDATE consignee SET isSendSms = 0 WHERE id = @personId", 
+                    new { personId = person.Id }
+                );
+            
+                return MessageHelper.RedirectAjax(T("ls_Flushsuccessfully"), Status.Success, whatsappUrl, null);
+            }
+        }
+        return MessageHelper.RedirectAjax(T("ls_Connectionerror"), Status.Error, "", null);
+    }
+    #endregion
 }
