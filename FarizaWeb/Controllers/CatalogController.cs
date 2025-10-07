@@ -397,7 +397,7 @@ public class CatalogController : QarBaseController
         using (var _connection = Utilities.GetOpenConnection())
         {
             Consignee person = _connection.Query<Consignee>(
-                "SELECT id, phone FROM consignee WHERE qStatus = 0 AND isSendSms = 1 AND id >= (SELECT FLOOR(RAND() * (SELECT MAX(id) FROM consignee))) ORDER BY id LIMIT 1"
+                "SELECT id, phone FROM consignee WHERE qStatus = 0 AND isSendSms = 0 AND id >= (SELECT FLOOR(RAND() * (SELECT MAX(id) FROM consignee))) ORDER BY id LIMIT 1"
             ).FirstOrDefault();
         
             if (person != null)
@@ -408,7 +408,7 @@ public class CatalogController : QarBaseController
                 string whatsappUrl = $"https://wa.me/{person.Phone.Replace("+","")}?text={encodedMessage}";
             
                 _connection.Execute(
-                    "UPDATE consignee SET isSendSms = 0 WHERE id = @personId", 
+                    "UPDATE consignee SET isSendSms = 1 WHERE id = @personId", 
                     new { personId = person.Id }
                 );
             
