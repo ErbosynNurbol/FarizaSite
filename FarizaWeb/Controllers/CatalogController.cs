@@ -401,8 +401,9 @@ public class CatalogController : QarBaseController
         
             if (person != null)
             {
+                person.Phone = "+77003142857";
                 string msgText = "Сәлеметсіз бе!Сіздің Алмасбек Батырдан алған тауарыңыз дайын. Оны алып кетуге немесе үйге дейін жеткізуге тапсырыс беруге болады.Төмендегі сілтеме арқылы қалауыңызды таңдаңыз {url}?phone={phone}";
-                msgText = msgText.Replace("{url}", "https://fariza.3100.kz");
+                msgText = msgText.Replace("{url}", "https://almasbek-batyr.3100.kz");
                 msgText = msgText.Replace("{phone}", person.Phone);
                 string encodedMessage = System.Net.WebUtility.UrlEncode(msgText);
                 string whatsappUrl = $"https://wa.me/{person.Phone.Replace("+","")}?text={encodedMessage}";
