@@ -86,7 +86,7 @@ public class CatalogController : QarBaseController
             foreach (var item in model.OrderList)
                 switch (item.Column)
                 {
-                    case 4:
+                    case 5:
                         {
                             orderSql += (string.IsNullOrEmpty(orderSql) ? "" : ",") + " addTime " + item.Dir;
                         }
@@ -107,11 +107,10 @@ public class CatalogController : QarBaseController
              client.Name,
              client.Phone,
              client.Address,
-            client.ShipperPhone,
-            client.BillType,
             client.Longitude,
             client.Latitude,
             client.ReceiptPath,
+            type = T($"{BillTypeHelper.GetStatusText(client.BillType)}"),   
             AddTime = UnixTimeHelper.UnixTimeToDateTime(client.AddTime).ToString("dd/MM/yyyy HH:mm")
         }).ToList();
         return MessageHelper.RedirectAjax(T("ls_Searchsuccessful"), Status.Success, "",
@@ -402,8 +401,9 @@ public class CatalogController : QarBaseController
         
             if (person != null)
             {
-                string msgText = "тапсыоыл уддваолалщда {url}";
+                string msgText = "Сәлеметсіз бе!Сіздің Алмасбек Батырдан алған тауарыңыз дайын. Оны алып кетуге немесе үйге дейін жеткізуге тапсырыс беруге болады.Төмендегі сілтеме арқылы қалауыңызды таңдаңыз {url}?phone={phone}";
                 msgText = msgText.Replace("{url}", "https://fariza.3100.kz");
+                msgText = msgText.Replace("{phone}", person.Phone);
                 string encodedMessage = System.Net.WebUtility.UrlEncode(msgText);
                 string whatsappUrl = $"https://wa.me/{person.Phone.Replace("+","")}?text={encodedMessage}";
             

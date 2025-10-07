@@ -38,6 +38,7 @@
                     "width": "20px",
                     "bSortable": false,
                     "render": function (data, type, row) {
+                        console.log("row对象:", row);
                         if (parseInt(row.isSuper) === 1)
                             return '<i class="fal fa-shield-check"></i>';
                         return'<div class="form-check abc-checkbox">\
@@ -65,9 +66,15 @@
                     }
                 },
                 {
+                    "data": 'type',
+                    "orderable": false
+                },
+            
+                {
                     "data": 'addTime',
                     "orderable": false
                 },
+                
                 {
                     "data": null,
                     "orderable": false,
