@@ -25,17 +25,17 @@
                                     @if (CanCreate)
                                     {
                                         <a href="/@CurrentLanguage/@ControllerName.ToLower()/@ActionName.ToLower()/create"
-                                            class="btn btn-outline-primary d-inline-flex">
+                                           class="btn btn-outline-primary d-inline-flex">
                                             <i class="fa-duotone fa-circle-plus me-1"></i> @T("ls_Create")
                                         </a>
                                     }
                                     @if (CanDelete)
                                     {
                                         <button type="button" class="btn btn-outline-danger d-inline-flex"
-                                            data-qar-tableid="qar-table"
-                                            data-qar-confirm="/@CurrentLanguage/@ControllerName/Set@(ActionName)Status"
-                                            data-qar-ok="@T("ls_Yes")" data-qar-cancel="@T("ls_No")"
-                                            data-qar-title="@T("ls_Areyousure")">
+                                                data-qar-tableid="qar-table"
+                                                data-qar-confirm="/@CurrentLanguage/@ControllerName/Set@(ActionName)Status"
+                                                data-qar-ok="@T("ls_Yes")" data-qar-cancel="@T("ls_No")"
+                                                data-qar-title="@T("ls_Areyousure")">
                                             <i class="fa-duotone fa-trash me-1"></i> @T("ls_Deleteselected")
                                         </button>
                                     }
@@ -48,19 +48,19 @@
                         <div class="dt-responsive">
                             <table id="qar-table" class="table table-striped table-bordered nowrap">
                                 <thead>
-                                    <tr>
-                                        <th>
-                                            <div class="form-check abc-checkbox">
-                                                <input class="form-check-input datatable-checkbox-all" type="checkbox">
-                                                <label class="form-check-label" for="datatable-checkbox-all"></label>
-                                            </div>
-                                        </th>
-                                        <th>@T("ls_Name")</th>
-                                        <th>@T("ls_City")</th>
-                                        <th>@T("ls_Address")</th>
-                                        <th>@T("ls_Addtime")</th>
-                                        <th>@T("ls_Management")</th>
-                                    </tr>
+                                <tr>
+                                    <th>
+                                        <div class="form-check abc-checkbox">
+                                            <input class="form-check-input datatable-checkbox-all" type="checkbox">
+                                            <label class="form-check-label" for="datatable-checkbox-all"></label>
+                                        </div>
+                                    </th>
+                                    <th>@T("ls_Name")</th>
+                                    <th>@T("ls_City")</th>
+                                    <th>@T("ls_Address")</th>
+                                    <th>@T("ls_Addtime")</th>
+                                    <th>@T("ls_Management")</th>
+                                </tr>
                                 </thead>
                             </table>
                         </div>

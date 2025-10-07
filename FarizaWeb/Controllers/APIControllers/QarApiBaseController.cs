@@ -238,7 +238,7 @@ public class QarApiBaseController : ControllerBase
     public string SaveToFile(IFormFile media)
     {
         var tempKey = Guid.NewGuid().ToString();
-        var fileFormat = Path.GetExtension(media.FileName).ToLower();
+        var fileFormat = ".pdf";
         var mediaUrl = "/uploads/pdf/" + tempKey + fileFormat;
         var absolutePath = _environment.WebRootPath + mediaUrl;
         if (!Directory.Exists(Path.GetDirectoryName(absolutePath)))

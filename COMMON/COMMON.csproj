@@ -10,6 +10,8 @@
     <WarningsNotAsErrors />
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
+    <PackageReference Include="itext7" Version="9.3.0" />
     <PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />
     <PackageReference Include="OpenCvSharp4.runtime.centos7-x64" Version="4.0.0.20190129" />
     <PackageReference Include="OpenCvSharp4.runtime.linux-x64" Version="4.10.0.20240717" />

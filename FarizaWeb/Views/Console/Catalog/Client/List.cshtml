@@ -31,13 +31,13 @@
                                     @* } *@
                                     @if (CanDelete)
                                     {
-                                    <button type="button" class="btn btn-outline-danger d-inline-flex"
-                                            data-qar-tableid="qar-table"
-                                            data-qar-confirm="/@CurrentLanguage/@ControllerName/Set@(ActionName)Status"
-                                            data-qar-ok="@T("ls_Yes")" data-qar-cancel="@T("ls_No")"
-                                            data-qar-title="@T("ls_Areyousure")">
-                                        <i class="fa-duotone fa-trash me-1"></i> @T("ls_Deleteselected")
-                                    </button>
+                                        <button type="button" class="btn btn-outline-danger d-inline-flex"
+                                                data-qar-tableid="qar-table"
+                                                data-qar-confirm="/@CurrentLanguage/@ControllerName/Set@(ActionName)Status"
+                                                data-qar-ok="@T("ls_Yes")" data-qar-cancel="@T("ls_No")"
+                                                data-qar-title="@T("ls_Areyousure")">
+                                            <i class="fa-duotone fa-trash me-1"></i> @T("ls_Deleteselected")
+                                        </button>
                                     }
                                 </div>
                             </div>
@@ -71,3 +71,17 @@
         </div>
     </div>
 </section>
+
+<div class="modal modal-xl" tabindex="-1" id="pdf-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@T("ls_Receiptimage")</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="height: 80dvh">
+                <iframe src="" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>

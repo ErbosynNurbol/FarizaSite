@@ -107,7 +107,10 @@ public class CatalogController : QarBaseController
              client.Name,
              client.Phone,
              client.Address,
-            client.Map2Gis,
+            client.ShipperPhone,
+            client.BillType,
+            client.Longitude,
+            client.Latitude,
             client.ReceiptPath,
             AddTime = UnixTimeHelper.UnixTimeToDateTime(client.AddTime).ToString("dd/MM/yyyy HH:mm")
         }).ToList();

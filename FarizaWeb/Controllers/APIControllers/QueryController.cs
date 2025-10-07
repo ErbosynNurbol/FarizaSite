@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using COMMON;
 using Dapper;
@@ -10,6 +11,7 @@ using MODEL.ViewModels;
 using Serilog;
 using FarizaWeb.Caches;
 using FarizaWeb.Controllers;
+using System.Globalization;
 using MODEL.FormatModels;
 
 namespace GalogWeb.Controllers.APIControllers;
@@ -28,6 +30,11 @@ public class QueryController : QarApiBaseController
         _environment = environment;
     }
 
+    public ReceiptParser.ReceiptInfo GetReceiptInfo(string receiptPath)
+    {
+        string fullPath = Path.Combine(_environment.WebRootPath, receiptPath.TrimStart('/'));
+        return ReceiptParser.ExtractReceiptInfo(fullPath);
+    }
     #endregion
 
     #region Language +Language(string query)
@@ -211,11 +218,10 @@ public class QueryController : QarApiBaseController
 
 
     #region Client
-
     [HttpPost]
     public IActionResult Client([FromForm] Client client,[FromForm] IFormFile receipt)
     {
-        var receiptFileUrl = string.Empty;
+        
         if (string.IsNullOrEmpty(client.Name))
             return MessageHelper.RedirectAjax(T("ls_Tfir"), Status.Error, "", "Name");
         if (string.IsNullOrEmpty(client.Phone) || !RegexHelper.IsPhoneNumber(client.Phone, out string phoneNumber))
@@ -225,53 +231,59 @@ public class QueryController : QarApiBaseController
             return MessageHelper.RedirectAjax(T("ls_Tfir"), Status.Error, "", "Address");
         if (receipt == null)
             return MessageHelper.RedirectAjax(T("ls_Psaftu"), Status.Error, "", "receipt");
-        if (!string.IsNullOrEmpty(client.Map2Gis))
+        
+        var receiptFileUrl = SaveToFile(receipt);
+        var receiptInfo = ReceiptParser.ExtractReceiptInfo(receiptFileUrl);
+        string billNumber = "";
+        int billAmount = 0;
+        if (receiptInfo != null)
         {
-            CoordinateExtractor.TryExtractCoordinates(client.Map2Gis, out double longitude, out double latitude);
-            client.Latitude = latitude;
-            client.Longitude = longitude;
+            billNumber = receiptInfo.QRNumber ?? "";
+            billAmount = Convert.ToInt32(receiptInfo.Amount);
         }
-        receiptFileUrl = SaveToFile(receipt);
+        else
+        {
+            return MessageHelper.RedirectAjax("Чек жарамсыз", Status.Error, "", "BillNumber");
+        }
+                
         using var connection = Utilities.GetOpenConnection();
         var currentTime = UnixTimeHelper.GetCurrentUnixTime();
         try
         {
             int? res;
-            var hasPhone = connection
-                .GetList<Client>("WHERE qStatus = 0 AND phone = @phone", new { client.Phone })
-                .FirstOrDefault();
-            if (hasPhone != null)
+            // 1. 先检查consignee
+            var consignee = connection.GetList<Consignee>("WHERE qStatus = 0 AND phone = @phone", new { client.Phone }).FirstOrDefault();
+            if (consignee == null)
             {
-                hasPhone.Name = client.Name;
-                hasPhone.Address = client.Address;
-                hasPhone.Map2Gis = client.Map2Gis;
-                hasPhone.Latitude = client.Latitude;
-                hasPhone.Longitude = client.Longitude;
-                hasPhone.ReceiptPath = receiptFileUrl;
-                hasPhone.UpdateTime = currentTime;
+                return MessageHelper.RedirectAjax("no peple", Status.Error, "", "Phone");
             }
-            else
+
+            var existingBill = connection.GetList<Client>("WHERE qStatus = 0 AND billNumber = @billNumber", new { billNumber }).FirstOrDefault();
+            if (existingBill != null)
             {
-                res = connection.Insert(new Client
-                {
-                    Name = client.Name,
-                    Address = client.Address,
-                    Phone = client.Phone,
-                    Map2Gis = client.Map2Gis,
-                    Latitude = client.Latitude,
-                    Longitude = client.Longitude,
-                    ReceiptPath = receiptFileUrl,
-                    AddTime = currentTime,
-                    UpdateTime = currentTime,
-                    QStatus = 0
-                });
-                if (res > 0)
-                {
-                    return MessageHelper.RedirectAjax(T("ls_Addedsuccessfully"), Status.Success,
-                        "", "");
-                }
+                return MessageHelper.RedirectAjax("Чек жарамсыз", Status.Error, "", "BillNumber");
             }
             
+            res = connection.Insert(new Client
+            {
+                Name = client.Name,
+                ConsigneeId = consignee.Id,
+                BillNumber = billNumber,
+                BillAmount = billAmount,
+                Address = client.Address,
+                Phone = client.Phone,
+                Latitude = client.Latitude,
+                Longitude = client.Longitude,
+                ReceiptPath = receiptFileUrl,
+                AddTime = currentTime,
+                UpdateTime = currentTime,
+                QStatus = 0
+            });
+            if (res > 0)
+            {
+                return MessageHelper.RedirectAjax(T("ls_Addedsuccessfully"), Status.Success,
+                    "", "");
+            }
         }
         catch (Exception e)
         {
@@ -286,7 +298,6 @@ public class QueryController : QarApiBaseController
     #endregion
 
     #region Get + Client
-    
     [HttpPost]
     public IActionResult GetServiceList(ApiUnifiedModel model)
     {
@@ -334,7 +345,6 @@ public class QueryController : QarApiBaseController
             x.Name,
             x.Phone,
             x.Address,
-            x.Map2Gis,
             x.ReceiptPath,
             AddTime = UnixTimeHelper.UnixTimeToDateTime(x.AddTime).ToString("dd/MM/yyyy HH:mm")
         }).ToList();
@@ -344,4 +354,39 @@ public class QueryController : QarApiBaseController
     
 
     #endregion
+    
+    
+    // [HttpPost]
+    // public IActionResult ImportCsv([FromForm] IFormFile csvFile)
+    // {
+    //     try
+    //     {
+    //         var csvData = CsvParseHelper.ParseCsvFile(csvFile);
+    //         var currentTime = UnixTimeHelper.GetCurrentUnixTime();
+    //     
+    //         using var connection = Utilities.GetOpenConnection();
+    //         int successCount = 0;
+    //     
+    //         foreach (var data in csvData)
+    //         {
+    //             var result = connection.Insert(new Consignee
+    //             {
+    //                 Phone = data.Phone,
+    //                 Products = data.Products,
+    //                 Address = data.Address,
+    //                 AddTime = currentTime,
+    //                 QStatus = 0,
+    //                 IsSendSms = 1
+    //             });
+    //         
+    //             if (result > 0) successCount++;
+    //         }
+    //     
+    //         return MessageHelper.RedirectAjax($"成功导入 {successCount} 条记录", Status.Success, "", "");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return MessageHelper.RedirectAjax($"导入失败: {ex.Message}", Status.Error, "", "");
+    //     }
+    // }
 }

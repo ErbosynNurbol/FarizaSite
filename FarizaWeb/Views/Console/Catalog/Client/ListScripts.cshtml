@@ -60,7 +60,7 @@
                     "data": null,
                     "orderable": false,
                     "render": function (data, type, row) {
-                        return `<a class="default-color-link" href="${row.map2Gis}" target="_blank">${row.address}</a>`;
+                        return `<a class="default-color-link" href="" target="_blank">${row.address}</a>`;
                 
                     }
                 },
@@ -75,7 +75,8 @@
                     "bSortable": false,
                     "render": function (data, type, row) {
                         return '<div class="button-items">\
-                                     <a class="btn btn-icon btn-outline-secondary" href="${row.receiptPath}"><i class="fa-duotone fa-pen-to-square"></i></a>\
+                                     <a class="btn btn-icon btn-outline-secondary view-pdf" href="javascript:void(0);" data-src="' + row.receiptPath + '"><i class="fa-duotone fa-eye"></i></a>\
+                                     \
                                 </div>';
 
                     }
@@ -83,13 +84,19 @@
             ],
             "oLanguage": $qar.getDataTableLanguage(),
             "preDrawCallback": function () {
-
+                
             },
             "rowCallback": function (nRow) {
 
             },
             "drawCallback": function (oSettings) {
-
+                $(".view-pdf").off("click").on("click", function () {
+                    const pdfSrc = $(this).data('src');
+                    const $modal = $("#pdf-modal");
+                    $modal.find("iframe").attr("src", `${pdfSrc}`);
+                    $modal.modal("show");
+                    console.log(pdfSrc);
+                });
             }
         });
     });
