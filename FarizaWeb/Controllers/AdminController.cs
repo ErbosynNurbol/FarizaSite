@@ -43,6 +43,12 @@ public class AdminController : QarBaseController
     [AllowAnonymous]
     public IActionResult Login()
     {
+        string phone = "77712377996";
+        if (!RegexHelper.IsPhoneNumber(phone, out string phoneNumber))
+        {
+            return null;
+        }
+            
         if (HttpContext.User.Identity.IsAuthenticated) return Redirect($"/{CurrentLanguage}/admin/profile");
         return View($"~/Views/Console/{ControllerName}/{ActionName}.cshtml");
     }

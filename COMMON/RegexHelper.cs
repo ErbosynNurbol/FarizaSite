@@ -52,11 +52,15 @@ public static class RegexHelper
 
     #endregion
 
-    #region Телефон нөмірін анықтау   +IsPhoneNumber(string phoneNumber, out string phoneNumber)
-
     static public bool IsPhoneNumber(string phone, out string phoneNumber)
     {
         phoneNumber = string.Empty;
+        
+        phone = Regex.Replace(phone ?? "", @"[^\d+]", "").Trim();
+    
+        if (string.IsNullOrEmpty(phone))
+            return false;
+    
         if (phone.StartsWith("1") && phone.Length == 11)
         {
             phoneNumber = "+86" + phone;
@@ -89,8 +93,7 @@ public static class RegexHelper
 
         return false;
     }
-
-    #endregion
+    
 
     #region Түс мәнінің дұрыстығын анықтау   +IsHexColorString(string str)
 

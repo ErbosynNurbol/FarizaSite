@@ -235,7 +235,7 @@ public class QueryController : QarApiBaseController
         if (string.IsNullOrEmpty(client.Name))
             return MessageHelper.RedirectAjax(T("ls_Tfir"), Status.Error, "", "Name");
         if (string.IsNullOrEmpty(client.Phone) || !RegexHelper.IsPhoneNumber(client.Phone, out string phoneNumber))
-            return MessageHelper.RedirectAjax(T("ls_Tfir"), Status.Error, "", "Phone");
+            return MessageHelper.RedirectAjax(T("ls_Tfir"), Status.Error, $"debug1:{client.Phone}", "Phone");
         client.Phone = phoneNumber;
         if (string.IsNullOrEmpty(client.Address))
             return MessageHelper.RedirectAjax(T("ls_Tfir"), Status.Error, "", "Address");
@@ -279,7 +279,7 @@ public class QueryController : QarApiBaseController
             var consignee = connection.GetList<Consignee>("WHERE qStatus = 0 AND phone = @phone", new { client.Phone }).FirstOrDefault();
             if (consignee == null)
             {
-                return MessageHelper.RedirectAjax(T("ls_Tuhnptd"), Status.Error, "", "Phone");
+                return MessageHelper.RedirectAjax(T("ls_Tuhnptd"), Status.Error, $"debug2:{client.Phone}", "Phone");
             }
 
             var existingBill = connection.GetList<Client>("WHERE qStatus = 0 AND billNumber = @billNumber", new { billNumber }).FirstOrDefault();
