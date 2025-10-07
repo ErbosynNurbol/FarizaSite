@@ -68,14 +68,13 @@ builder.Services.AddControllersWithViews((configure =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", policy => policy
-        .AllowAnyOrigin()
+        .WithOrigins(
+            "http://localhost:5106",
+            "https://almasbek-batyr.3100.kz"
+        )
         .AllowAnyMethod()
-        .AllowAnyHeader());
-
-    options.AddPolicy("StaticFile", policy => policy
-        .WithOrigins("http://localhost:5106", "https://almasbek-batyr.3100.kz")
         .AllowAnyHeader()
-        .AllowAnyMethod());
+        .AllowCredentials());
 });
 
 
@@ -122,7 +121,7 @@ app.UseStaticFiles(new StaticFileOptions
     ContentTypeProvider = provider,
     OnPrepareResponse = ctx => { ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000"); }
 });
-
+app.UseCors("AllowSpecificOrigin");
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
