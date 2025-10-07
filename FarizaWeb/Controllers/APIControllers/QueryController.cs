@@ -254,7 +254,7 @@ public class QueryController : QarApiBaseController
         int billAmount = 0;
         if (receiptInfo != null)
         {
-            if (billNumber.Length > 0 && receiptInfo.Amount > 0)
+            if (!string.IsNullOrEmpty(receiptInfo.QRNumber) && receiptInfo.Amount > 0)
             {
                 billNumber = receiptInfo.QRNumber;
                 billAmount = Convert.ToInt32(receiptInfo.Amount);
