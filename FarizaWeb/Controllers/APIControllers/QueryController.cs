@@ -287,6 +287,8 @@ public class QueryController : QarApiBaseController
                 BillNumber = billNumber,
                 RegionId = regionId,
                 BillAmount = billAmount,
+                ShipperPhone = client.ShipperPhone,
+                BillType = 0,
                 Address = client.Address,
                 Phone = client.Phone,
                 Latitude = client.Latitude,
