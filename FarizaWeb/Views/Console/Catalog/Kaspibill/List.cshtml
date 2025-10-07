@@ -27,9 +27,8 @@
                     </div>
                     <div class="card-body">
                         <div class="dt-responsive">
-                            
                             <div class="mb-1">
-                                <button class="btn btn-primary" type="button" id="btn-get-advertise" data-loading-text="@T("ls_Loading") ..."><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                                <button class="btn btn-primary" type="button" id="btn-get-bill" data-loading-text="@T("ls_Loading") ..."> @T("ls_Choosefile")</button>
                             </div>
                         </div>
                     </div>
@@ -42,12 +41,8 @@
 @section scripts{
    <script>
        $(function () {
-           $('#btn-get-advertise').on('click', function () {
-               $.post('/@CurrentLanguage/catalog/advertise', function (data) {
-                   if (data['status'] === 'success') {
-                       window.open(data['backUrl'], "_blank") || window.location.replace(data['backUrl']);
-                   }
-               });
+           $('#btn-get-bill').on('click', function () {
+              
            });
        })
    </script>

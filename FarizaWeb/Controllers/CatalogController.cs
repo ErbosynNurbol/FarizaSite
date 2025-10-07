@@ -438,6 +438,17 @@ public class CatalogController : QarBaseController
         }
         return Redirect($"/{CurrentLanguage}/{ControllerName.ToLower()}/{ActionName.ToLower()}/list");
     }
+
+    [HttpPost]
+    public IActionResult Kaspibill()
+    {
+        using (var _connection = Utilities.GetOpenConnection())
+        {
+            
+        }
+        return Redirect($"/{CurrentLanguage}/{ControllerName.ToLower()}/{ActionName.ToLower()}/list");
+
+    }
     
 
     #endregion
