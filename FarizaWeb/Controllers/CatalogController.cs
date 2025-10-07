@@ -414,8 +414,8 @@ public class CatalogController : QarBaseController
             
                 return MessageHelper.RedirectAjax(T("ls_Flushsuccessfully"), Status.Success, whatsappUrl, null);
             }
+            return MessageHelper.RedirectAjax(T("ls_Complete"), Status.Success, "", null);
         }
-        return MessageHelper.RedirectAjax(T("ls_Connectionerror"), Status.Error, "", null);
     }
     #endregion
 }
