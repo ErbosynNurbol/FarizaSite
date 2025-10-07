@@ -276,7 +276,7 @@ public class QueryController : QarApiBaseController
         {
             int? res;
             // 1. 先检查consignee
-            var consignee = connection.GetList<Consignee>("WHERE qStatus = 0 AND phone = @phone", new { client.Phone }).FirstOrDefault();
+            var consignee = connection.GetList<Consignee>("WHERE qStatus = 0 AND phone = @phone", new { phone = client.Phone  }).FirstOrDefault();
             if (consignee == null)
             {
                 return MessageHelper.RedirectAjax(T("ls_Tuhnptd"), Status.Error, "", "Phone");
