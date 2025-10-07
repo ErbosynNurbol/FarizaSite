@@ -485,4 +485,10 @@ public class ModalController : QarBaseController
     }
 
     #endregion
+    
+    
+    public IActionResult OpenPdfModal()
+    {
+        return View($"~/Views/Console/{ControllerName}/{ActionName}.cshtml");
+    }
 }

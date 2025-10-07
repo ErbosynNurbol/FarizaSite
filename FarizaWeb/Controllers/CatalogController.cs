@@ -108,6 +108,7 @@ public class CatalogController : QarBaseController
              client.Phone,
              client.Address,
             client.Map2Gis,
+            client.ReceiptPath,
             AddTime = UnixTimeHelper.UnixTimeToDateTime(client.AddTime).ToString("dd/MM/yyyy HH:mm")
         }).ToList();
         return MessageHelper.RedirectAjax(T("ls_Searchsuccessful"), Status.Success, "",
@@ -161,7 +162,7 @@ public class CatalogController : QarBaseController
 
     #endregion
     
-     #region Regions +Region(string query)
+    #region Regions +Region(string query)
 
     public IActionResult Region(string query)
     {

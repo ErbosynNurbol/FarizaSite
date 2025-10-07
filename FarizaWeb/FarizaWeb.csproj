@@ -41,15 +41,12 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Hangfire\" />
-        <Folder Include="wwwroot\console\images\" />
         <Folder Include="wwwroot\console\js\plugins\tinymce\" />
         <Folder Include="wwwroot\console\js\plugins\uppy\" />
         <Folder Include="wwwroot\console\js\plugins\uppy\langs\" />
         <Folder Include="Views\Console\Admin\" />
-        <Folder Include="Views\Console\Modal\" />
         <Folder Include="Views\Console\QarBase\" />
         <Folder Include="Views\Shared\" />
-        <Folder Include="wwwroot\sitemap\xml\" />
         <Folder Include="Views\Console\Admin\Person\" />
         <Folder Include="Views\Console\Admin\Role\" />
         <Folder Include="Views\Console\Partial\" />

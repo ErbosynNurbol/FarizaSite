@@ -75,7 +75,7 @@
                     "bSortable": false,
                     "render": function (data, type, row) {
                         return '<div class="button-items">\
-                                     <a class="btn btn-icon btn-outline-secondary" href="/@CurrentLanguage/@(ControllerName.ToLower())/@(ActionName.ToLower())/edit?id=' + row.id + '"><i class="fa-duotone fa-pen-to-square"></i></a>\
+                                     <a class="btn btn-icon btn-outline-secondary" href="${row.receiptPath}"><i class="fa-duotone fa-pen-to-square"></i></a>\
                                 </div>';
 
                     }
