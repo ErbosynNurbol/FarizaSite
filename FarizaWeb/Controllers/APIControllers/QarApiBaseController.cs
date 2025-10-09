@@ -238,15 +238,18 @@ public class QarApiBaseController : ControllerBase
     public string SaveToFile(IFormFile media)
     {
         var tempKey = Guid.NewGuid().ToString();
-        var fileFormat = ".pdf";
-        var mediaUrl = "/uploads/pdf/" + tempKey + fileFormat;
+        var fileFormat = Path.GetExtension(media.FileName);
+        var mediaUrl = "/uploads/files/" + tempKey + fileFormat;
         var absolutePath = _environment.WebRootPath + mediaUrl;
+    
         if (!Directory.Exists(Path.GetDirectoryName(absolutePath)))
             Directory.CreateDirectory(Path.GetDirectoryName(absolutePath) ?? string.Empty);
+    
         using var stream = System.IO.File.OpenWrite(absolutePath);
         media.CopyTo(stream);
         return mediaUrl;
     }
-
+    
     #endregion
+    
 }

@@ -22,7 +22,7 @@ public class CatalogController : QarBaseController
         _memoryCache = memoryCache;
         _environment = environment;
     }
-
+    
     #region About +About(string query)
 
     public IActionResult About(string query)
@@ -440,14 +440,113 @@ public class CatalogController : QarBaseController
     }
 
     [HttpPost]
-    public IActionResult Kaspibill()
+    public IActionResult Kaspibill([FromForm] IFormFile uploadFile)
     {
-        using (var _connection = Utilities.GetOpenConnection())
+        if (uploadFile == null || uploadFile.Length == 0)
         {
-            
+            return MessageHelper.RedirectAjax(T("ls_Tfir"), Status.Error, "", "file");
         }
-        return Redirect($"/{CurrentLanguage}/{ControllerName.ToLower()}/{ActionName.ToLower()}/list");
 
+        try
+        {
+            var receiptFileUrl = SaveToExcelFile(uploadFile);
+            string fullPath = Path.Combine(_environment.WebRootPath, receiptFileUrl.TrimStart('/'));
+            var payments = ExcelHelper.ReadKaspiPayments(fullPath);
+            var currentTime = UnixTimeHelper.GetCurrentUnixTime();
+            var adminId = GetAdminId();
+
+            using (var connection = Utilities.GetOpenConnection())
+            {
+                int? res;
+                var clientList = connection.GetList<Client>("WHERE qStatus = 0");
+                int successCount = 0;
+
+                foreach (var payment in payments)
+                {
+                    if (!string.IsNullOrEmpty(payment.OperationNumber))
+                    {
+                        var existing = connection.GetList<Kaspibill>("WHERE qrNumber = @qrNumber", new { qrNumber = payment.OperationNumber })
+                            .FirstOrDefault();
+                        var amount = int.TryParse(payment.OperationAmount, out var result) ? result : 0;
+        
+                        if (existing == null)
+                        {
+                            res = connection.Insert(new Kaspibill
+                            {
+                                AdminId = adminId,
+                                QrNumber = payment.OperationNumber,
+                                Amount = amount,
+                                AddTime = currentTime
+                            });
+            
+                            if (res > 0)
+                            {
+                                successCount++;
+                
+                                var matchingClient = clientList.FirstOrDefault(c => c.BillNumber == payment.OperationNumber);
+                
+                                if (matchingClient != null)
+                                {
+                                    if (matchingClient.BillAmount == amount && amount >= 1500)
+                                    {
+                                        matchingClient.BillType = 2;
+                                        connection.Update(matchingClient);
+                                    }
+                                    else
+                                    {
+                                        matchingClient.BillType = 1;
+                                        connection.Update(matchingClient);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (successCount > 0)
+                {
+                    return MessageHelper.RedirectAjax(T("ls_Addedsuccessfully"), Status.Success,
+                        $"/{CurrentLanguage}/{ControllerName.ToLower()}/{ActionName.ToLower()}/list", "");
+                }
+                else
+                {
+                    return MessageHelper.RedirectAjax(T("ls_Savefailed"), Status.Error, "", "");
+                }
+            }
+
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
+        }
+        catch (Exception ex)
+        {
+            return MessageHelper.RedirectAjax(T("ls_Oswwptal"), Status.Error, "", "");
+        }
+
+        return Redirect($"/{CurrentLanguage}/{ControllerName.ToLower()}/{ActionName.ToLower()}/list");
+    }
+
+    public string SaveToExcelFile(IFormFile media)
+    {
+        var tempKey = Guid.NewGuid().ToString();
+        var fileFormat = Path.GetExtension(media.FileName);
+    
+        // 如果为空就默认pdf
+        if (string.IsNullOrEmpty(fileFormat))
+        {
+            fileFormat = ".xlsx";
+        }
+    
+        var mediaUrl = "/uploads/files/" + tempKey + fileFormat;
+        var absolutePath = _environment.WebRootPath + mediaUrl;
+    
+        if (!Directory.Exists(Path.GetDirectoryName(absolutePath)))
+            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath) ?? string.Empty);
+    
+        using var stream = System.IO.File.OpenWrite(absolutePath);
+        media.CopyTo(stream);
+        return mediaUrl;
     }
     
 

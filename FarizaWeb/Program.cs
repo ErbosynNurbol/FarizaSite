@@ -27,6 +27,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 QarSingleton.GetInstance().SetSiteTheme(defaultTheme);
 QarSingleton.GetInstance().SetConnectionString(builder.Configuration[$"{defaultTheme}:ConnectionString"]);

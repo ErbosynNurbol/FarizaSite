@@ -10,7 +10,9 @@
     <WarningsNotAsErrors />
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Aspose.Cells" Version="25.9.0" />
     <PackageReference Include="CsvHelper" Version="33.1.0" />
+    <PackageReference Include="EPPlus" Version="8.2.0" />
     <PackageReference Include="itext7" Version="9.3.0" />
     <PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />
     <PackageReference Include="OpenCvSharp4.runtime.centos7-x64" Version="4.0.0.20190129" />
@@ -33,5 +35,16 @@
     <None Update="Libs\Aspose.Total.NET.lic">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.BarCode">
+      <HintPath>libs\Aspose.BarCode.dll</HintPath>
+    </Reference>
+    <Reference Include="Aspose.Cells">
+      <HintPath>libs\Aspose.Cells.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Licenses/Aspose.Total.NET.lic" />
   </ItemGroup>
 </Project>

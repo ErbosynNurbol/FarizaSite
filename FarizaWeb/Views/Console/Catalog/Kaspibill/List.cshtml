@@ -17,7 +17,8 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <div class="card">
+                <form class="card qar-form" action="/@CurrentLanguage/@ControllerName/@(ActionName)" method="post"
+                     enctype="multipart/form-data">
                     <div class="card-header">
                         <div class="row">
                             <div class="col-12 col-sm-4 mb-3 mb-sm-0">
@@ -25,25 +26,42 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body "  >
                         <div class="dt-responsive">
                             <div class="mb-1">
-                                <button class="btn btn-primary" type="button" id="btn-get-bill" data-loading-text="@T("ls_Loading") ..."> @T("ls_Choosefile")</button>
+                                <input type="file" class="d-none" id="fileInput" name="uploadFile"  accept=".xlsx,.xls,.pdf">
+                                <button type="button" id="btn-get-bill" class="btn btn-primary me-2" data-loading-text="@T("ls_Loading") ...">
+                                    <i class="fa-duotone fa-floppy-disk me-1"></i> @T("ls_Choosefile")
+                                </button>
+                                <button type="submit" id="btn-sub-bill" class="btn btn-primary me-2" data-loading-text="@T("ls_Loading") ...">
+                                    @T("ls_Save")
+                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 </section>
 
 @section scripts{
-   <script>
-       $(function () {
-           $('#btn-get-bill').on('click', function () {
-              
-           });
-       })
-   </script>
-}
+    <script>
+        $(function () {
+            $('#btn-get-bill').on('click', function () {
+                $('#fileInput').click();
+            });
+
+            $('#fileInput').on('change', function () {
+                if (this.files.length > 0) {
+                    $('#btn-sub-bill').prop('disabled', false); 
+                    console.log('选择了文件：' + this.files[0].name);
+                } else {
+                    $('#btn-sub-bill').prop('disabled', true); 
+                }
+            });
+
+            $('#btn-sub-bill').prop('disabled', true);
+        });
+    </script>
+    }
